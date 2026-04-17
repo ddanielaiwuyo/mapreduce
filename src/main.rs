@@ -1,6 +1,4 @@
-#![allow(dead_code, unused)]
 mod worker;
-use std::fs;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     // This is a stub, that we'll refactor to RPC's while been
@@ -10,7 +8,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     // a specific task
     let task_file_path = get_task("tasks/the_hemingway.txt", false);
     {
-        let rpc_response = worker::ask_task();
+        let _rpc_response = worker::ask_task();
     }
 
     worker::worker(&task_file_path, custom_map, custom_reduce)?;
@@ -47,14 +45,14 @@ fn get_task(task_name: &str, ask: bool) -> String {
         },
     ];
 
-    for mut task in &mut current_tasks {
+    for task in &mut current_tasks {
         if task.file_name == task_name && ask && task.state == State::InProgress {
             task.state = State::Done;
             break;
         }
     }
 
-    for mut task in &mut current_tasks {
+    for task in &mut current_tasks {
         if task.state == State::Idle {
             task.state = State::InProgress;
             println!("[CO-ORDINATOR] Assigning task: {:?}", task);
@@ -66,7 +64,7 @@ fn get_task(task_name: &str, ask: bool) -> String {
 }
 
 fn custom_map(key: &String, value: &str) -> Vec<worker::MKeyValue> {
-    println!("[USER_MAP]: Starting implementation");
+    println!("[USER_MAP]: Starting implementation for {}", key);
 
     let mut cleaned_content: String = String::with_capacity(value.len());
 
@@ -79,7 +77,7 @@ fn custom_map(key: &String, value: &str) -> Vec<worker::MKeyValue> {
 
     let value = cleaned_content.to_ascii_lowercase();
 
-    let mut words = value.split_ascii_whitespace();
+    let words = value.split_ascii_whitespace();
     let mut kv_pairs = vec![];
     for word in words {
         kv_pairs.push(worker::MKeyValue {

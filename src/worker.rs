@@ -1,4 +1,3 @@
-#![allow(dead_code, unused)]
 use std::collections::HashMap;
 use std::fs;
 
@@ -37,7 +36,11 @@ pub fn worker(
     let content = match fs::read_to_string(task_file_name) {
         Ok(v) => v,
         Err(err) => {
-            let err_info = format!("[WORKER] could not open task_file: {}", task_file_name);
+            let err_info = format!(
+                "[WORKER] could not open task_file: {}
+                Reason: {err}",
+                task_file_name
+            );
             return Err(err_info.into());
         }
     };
@@ -48,8 +51,8 @@ pub fn worker(
     // All we could give it the name of the file and the content
     // I'm not sure yet, but I think I can wayne on the second one, since it almost
     // looks like the function signature described in the GO code
-    let mut words = content.split_ascii_whitespace();
-    let mut list_kv_pairs = map_fn(task_file_name, &content);
+    // let words = content.split_ascii_whitespace();
+    let list_kv_pairs = map_fn(task_file_name, &content);
 
     let mut tally: HashMap<String, HashCounter> = HashMap::with_capacity(list_kv_pairs.len());
     for kv in list_kv_pairs.iter() {
@@ -71,7 +74,7 @@ pub fn worker(
     }
 
     for (k, v) in tally {
-        println!("{}",reduce_fn(k, v.values))
+        println!("{}", reduce_fn(k, v.values))
     }
     Ok(list_kv_pairs)
 }
