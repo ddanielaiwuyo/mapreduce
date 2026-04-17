@@ -1,7 +1,3 @@
-[CO-ORDINATOR] Getting task
-[CO-ORDINATOR] Assigning task: Task { file_name: "tasks/the_hemingway.txt", state: InProgress }
-[WORKER] Woker starting
-[USER_MAP]: Starting implementation
 disappear -> 1
 cat -> 1
 less -> 1

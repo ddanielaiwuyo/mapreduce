@@ -50,25 +50,6 @@ pub fn worker(
     // looks like the function signature described in the GO code
     let mut words = content.split_ascii_whitespace();
     let mut list_kv_pairs = map_fn(task_file_name, &content);
-    // for kv in list_kv_pairs.iter() {
-    //     println!("{:?}", kv);
-    // }
-
-    // Next thing to do, will should be able to collate the kv_pairs?
-    // For example, according to the lecture:
-    // [ "a": "1", "b": "1", "b": "1", "c": "1" }
-    // ----- COLLATE -----
-    // k = "a", v = ["1", "1", "1", "1", "1" ]
-    // reduceFn(k, v) -> "5"
-    // Well, I think the MapReduce is way more complex than this, that this example
-    // completely removes any actuall situation where they implement MapReduce
-
-    // So how I'm thinking about it is we can get all the keys in a set
-    // Value {
-    //   _key: String
-    //   _occurence: u32
-    // }
-    // So anytime we encounter a key that exists inside the set, we just increase the occcurence
 
     let mut tally: HashMap<String, HashCounter> = HashMap::with_capacity(list_kv_pairs.len());
     for kv in list_kv_pairs.iter() {
@@ -92,9 +73,5 @@ pub fn worker(
     for (k, v) in tally {
         println!("{}",reduce_fn(k, v.values))
     }
-
-    // I guess this is where we submit the results from the reduceFn to the out-file? and then alert the
-    // master coord
-
     Ok(list_kv_pairs)
 }
