@@ -1,6 +1,7 @@
 mod coordinator;
 mod worker;
 
+// Source: http://nil.csail.mit.edu/6.5840/2025/labs/lab-mr.html
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     // This is a stub, that we'll refactor to RPC's while been
     // multithreaded. This is supposed to simulate a worker
