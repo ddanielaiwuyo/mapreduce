@@ -3,7 +3,7 @@ You can find the full youtube playlist at [MIT Distributed Systems: 6.8.24 ](htt
 
 
 ### Project: MapReduce
-You can find the source paper published from google on [MapReduce research](./mapreduce-osdi04.pdf)
+You can find the source paper published from google on [MapReduce research](https://static.googleusercontent.com/media/research.google.com/en//archive/mapreduce-osdi04.pdf)
 
 Lecture Video: [Introduction](https://www.youtube.com/watch?v=cQP8WApzIQQ)
 
