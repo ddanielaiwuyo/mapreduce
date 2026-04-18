@@ -3,8 +3,7 @@ mod worker;
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     // This is a stub, that we'll refactor to RPC's while been
     // multithreaded. This is supposed to simulate a worker
-    // asking the co-ordinator main for a task, and when they
-    // also report they're done w a task. But for now, we're asking for
+    // asking the co-ordinator main for a task, and when they also report they're done w a task. But for now, we're asking for
     // a specific task
     let task_file_path = get_task("tasks/the_hemingway.txt", false);
     {
@@ -17,9 +16,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 #[derive(PartialEq, Debug)]
 enum State {
-    Idle,
-    InProgress,
-    Done,
+    Idle = 0,
+    InProgress = 1,
+    Done = 2,
 }
 
 #[derive(Debug)]

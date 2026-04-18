@@ -27,6 +27,7 @@ struct HashCounter {
     values: Vec<String>,
 }
 
+/// Worker function
 pub fn worker(
     task_file_name: &String,
     map_fn: MapFn,
@@ -67,8 +68,11 @@ pub fn worker(
 
             continue;
         } else {
-            if let Some(hash_counter) = tally.get_mut(&kv.key) {
-                hash_counter.values.push(kv.value.clone());
+            match tally.get_mut(&kv.key) {
+                Some(hash_counter) => {
+                    hash_counter.values.push(kv.value.clone());
+                }
+                _ => (),
             };
         }
     }
