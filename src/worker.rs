@@ -41,7 +41,7 @@ pub struct WorkerInstruction {
     pub reduce_fn: ReduceFn,
 }
 
-const FILE_PREFIX: &str = "mr";
+const FILE_PREFIX: &str = "mr-out";
 
 /// Worker function takes the file path of where the  work exists, extracts the contents and feeds
 /// it into the `map_fn` and then into the `reduce_fn`. The list of key-value pairs returned are
