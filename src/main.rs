@@ -9,20 +9,19 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         let _rpc_response = worker::stub_rpc_request_task();
     }
 
-    let current_tasks = vec![
+    let mut current_tasks = vec![
         coordinator::Task::new(String::from("tasks/adventure-of-sherlock-holmes.txt")),
         coordinator::Task::new(String::from("tasks/the_hemingway.txt")),
         coordinator::Task::new(String::from("tasks/caravan.txt")),
         coordinator::Task::new(String::from("tasks/poem.txt")),
+        coordinator::Task::new(String::from("tasks/nonexistent_file")),
     ];
 
-    let _ = coordinator::coordinator(current_tasks, custom_map, custom_reduce);
+    let _ = coordinator::coordinator(&mut current_tasks, custom_map, custom_reduce);
     Ok(())
 }
 
-fn custom_map(key: &String, value: &str) -> Vec<worker::MKeyValue> {
-    println!("[map]: {}", key);
-
+fn custom_map(_key: &String, value: &str) -> Vec<worker::MKeyValue> {
     let mut cleaned_content: String = String::with_capacity(value.len());
 
     for ch in value.chars() {

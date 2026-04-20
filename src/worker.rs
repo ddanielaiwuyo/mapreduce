@@ -24,10 +24,20 @@ struct HashCounter {
     values: Vec<String>,
 }
 
+// Currenttly: Right now, threads can just send the value of a computation but we can't really tell
+// for which task, so we'll want to wrap this in a reponse Stuct, kinda in the same way. At the same
+// time, we might want to extend it for the work to request for more work that it can carry out.
+// This wat the coordinator knows how to update each task as Failed, Done, Idle, InProgess
+#[derive(Debug)]
+pub struct Response {
+    pub id: String,
+    pub value: Option<Vec<MKeyValue>>,
+}
+
 #[derive(Debug)]
 pub struct WorkerInstruction {
     /// Send channel the worker uses to communicate with the coordinator
-    pub send_ch: Sender<Option<Vec<MKeyValue>>>,
+    pub send_response: Sender<Response>,
 
     /// The worker will look into this file path to get the input.
     ///
@@ -52,12 +62,11 @@ pub fn worker(
     map_fn: MapFn,
     reduce_fn: ReduceFn,
 ) -> Result<Vec<MKeyValue>, Box<dyn std::error::Error>> {
-    println!("[WORKER] Woker starting");
     let content = match fs::read_to_string(task_file_path) {
         Ok(v) => v,
         Err(err) => {
             let err_info = format!(
-                "[WORKER] could not open task_file: {}
+                "Could not open task_file: {}
                 Reason: {err}",
                 task_file_path
             );
@@ -134,18 +143,24 @@ pub fn thread_worker(instruction: WorkerInstruction) -> JoinHandle<()> {
         let _ = match result {
             Ok(success) => {
                 instruction
-                    .send_ch
-                    .send(Some(success))
+                    .send_response
+                    .send(Response {
+                        id: instruction.file_path,
+                        value: Some(success),
+                    })
                     .expect("[worker] could not send. orphaned. Coordinator has been closed");
-                drop(instruction.send_ch);
+                drop(instruction.send_response);
             }
             Err(err) => {
                 println!("[worker-error]: {err}",);
                 instruction
-                    .send_ch
-                    .send(None)
+                    .send_response
+                    .send(Response {
+                        id: instruction.file_path,
+                        value: None,
+                    })
                     .expect("[worker] could not send. orphaned. Coordinator has been closed");
-                drop(instruction.send_ch);
+                drop(instruction.send_response);
                 return;
             }
         };
