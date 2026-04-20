@@ -46,16 +46,8 @@ pub fn coordinator(
         task.state = State::InProgress;
     }
 
-    // TODO(next_thing)
-    // 1. Make sure that as each thread reports back, they report with the id
-    // so we can update the task to State::Done. We could also consider changing
-    // the tasks to a `Stack` so we can pop tasks that have already be done, or better still a hashmap
-    // 2. Decide whether workers save their output to a dest file or the coordinator does
     let mut responses = vec![];
     drop(send_response_ch);
-    // for result in recv_ch {
-    //     results.push(result)
-    // }
 
     for response in recv_ch {
         responses.push(response)
@@ -81,7 +73,7 @@ pub fn coordinator(
     println!(
         "
         ========================== ==========================
-                    [coordinator] failed tasks
+                    [coordinator-report] failed tasks
         ========================== ==========================
         "
     );

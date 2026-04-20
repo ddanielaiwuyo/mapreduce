@@ -24,10 +24,6 @@ pub struct HashCounter {
     pub values: Vec<String>,
 }
 
-// Currenttly: Right now, threads can just send the value of a computation but we can't really tell
-// for which task, so we'll want to wrap this in a reponse Stuct, kinda in the same way. At the same
-// time, we might want to extend it for the work to request for more work that it can carry out.
-// This wat the coordinator knows how to update each task as Failed, Done, Idle, InProgess
 #[derive(Debug)]
 pub struct Response {
     pub id: String,
