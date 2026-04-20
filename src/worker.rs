@@ -5,7 +5,7 @@ use std::sync::mpsc::Sender;
 use std::thread::JoinHandle;
 use std::{fs, thread};
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct MKeyValue {
     pub key: String,
     pub value: String,
@@ -19,9 +19,9 @@ pub fn stub_rpc_request_task() -> String {
 }
 
 #[derive(Debug, Hash, PartialEq, Eq)]
-struct HashCounter {
-    key: String,
-    values: Vec<String>,
+pub struct HashCounter {
+    pub key: String,
+    pub values: Vec<String>,
 }
 
 // Currenttly: Right now, threads can just send the value of a computation but we can't really tell
@@ -51,7 +51,7 @@ pub struct WorkerInstruction {
     pub reduce_fn: ReduceFn,
 }
 
-const FILE_PREFIX: &str = "mr-out";
+pub const FILE_PREFIX: &str = "mr-out";
 
 /// Worker function takes the file path of where the  work exists, extracts the contents and feeds
 /// it into the `map_fn` and then into the `reduce_fn`. The list of key-value pairs returned are
@@ -170,7 +170,7 @@ pub fn thread_worker(instruction: WorkerInstruction) -> JoinHandle<()> {
 }
 
 /// Workers write the output of their reduce function to RESULT_DIR/<PREFIX_NAME>-<filename>
-const RESULT_DIR: &str = "results";
+pub const RESULT_DIR: &str = "results";
 
 /// Writes output to destination file by creating it in the `RESULT_DIR`'s directory. If the file
 /// already exists, the file is truncated and written to

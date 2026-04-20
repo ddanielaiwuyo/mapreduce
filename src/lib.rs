@@ -1,27 +1,6 @@
-mod coordinator;
-mod worker;
-// Source: http://nil.csail.mit.edu/6.5840/2025/labs/lab-mr.html
+pub mod worker;
 
-fn main() -> Result<(), Box<dyn std::error::Error>> {
-    // The final state of this project should make use of RPC's for communication
-    // between workers and the coordinator node
-    {
-        let _rpc_response = worker::stub_rpc_request_task();
-    }
-
-    let mut current_tasks = vec![
-        coordinator::Task::new(String::from("tasks/adventure-of-sherlock-holmes.txt")),
-        coordinator::Task::new(String::from("tasks/the_hemingway.txt")),
-        coordinator::Task::new(String::from("tasks/caravan.txt")),
-        coordinator::Task::new(String::from("tasks/poem.txt")),
-        coordinator::Task::new(String::from("tasks/nonexistent_file")),
-    ];
-
-    let cm = custom_map;
-    let _ = coordinator::coordinator(&mut current_tasks, cm, custom_reduce);
-    Ok(())
-}
-
+// For the tests to have access them. Later we can deicpher fn pointer vs fn item
 pub fn custom_map(_key: &String, value: &str) -> Vec<worker::MKeyValue> {
     let mut cleaned_content: String = String::with_capacity(value.len());
 
