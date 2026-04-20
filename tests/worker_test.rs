@@ -1,7 +1,7 @@
 use mapreduce::worker;
 use mapreduce::{custom_map, custom_reduce};
 use pretty_assertions::assert_eq;
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 use std::fs;
 use std::io::Write;
 use std::path::PathBuf;
@@ -15,8 +15,7 @@ fn write_excerpt(filename: &str, content: &str) -> Result<String, Box<dyn std::e
 }
 
 fn shuffle_phase(list_kv_pairs: Vec<worker::MKeyValue>) -> String {
-    let mut tally: HashMap<String, worker::HashCounter> =
-        HashMap::with_capacity(list_kv_pairs.len());
+    let mut tally: BTreeMap<String, worker::HashCounter> = BTreeMap::new();
     for kv in list_kv_pairs.iter() {
         if !tally.contains_key(&kv.key) {
             tally.insert(
@@ -63,10 +62,11 @@ fn worker_produces_correct_map_output() -> Result<(), Box<dyn std::error::Error>
 
     let filename = "worker-test";
     let full_path = write_excerpt(filename, excerpt)?;
-    let execpted_list_kv_pairs = custom_map(&String::from("test_key"), excerpt);
+    let mut expected_list_kv_pairs = custom_map(&String::from("test_key"), excerpt);
+    expected_list_kv_pairs.sort_by_key(|k| k.key.clone());
     let actual_list_kv_pairs_result = worker::worker(&full_path, custom_map, custom_reduce)?;
-    assert_eq!(execpted_list_kv_pairs, actual_list_kv_pairs_result);
-    let expected_result = shuffle_phase(execpted_list_kv_pairs);
+    assert_eq!(expected_list_kv_pairs, actual_list_kv_pairs_result);
+    let expected_result = shuffle_phase(expected_list_kv_pairs);
 
     // Read from outfile
     let out_file = format!("{}-{}", worker::FILE_PREFIX, filename);

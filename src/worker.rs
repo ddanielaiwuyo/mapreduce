@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 use std::io::Write;
 use std::path::PathBuf;
 use std::sync::mpsc::Sender;
@@ -74,9 +74,10 @@ pub fn worker(
         }
     };
 
-    let list_kv_pairs = map_fn(task_file_path, &content);
+    let mut list_kv_pairs = map_fn(task_file_path, &content);
 
-    let mut tally: HashMap<String, HashCounter> = HashMap::with_capacity(list_kv_pairs.len());
+    list_kv_pairs.sort_by_key(|kv| kv.key.clone());
+    let mut tally: BTreeMap<String, HashCounter> = BTreeMap::new();
     for kv in list_kv_pairs.iter() {
         if !tally.contains_key(&kv.key) {
             tally.insert(
@@ -87,7 +88,6 @@ pub fn worker(
                 },
             );
 
-            continue;
         } else {
             match tally.get_mut(&kv.key) {
                 Some(hash_counter) => {
@@ -98,9 +98,6 @@ pub fn worker(
         }
     }
 
-    // TODO: Add sorting here, so that the result can easily be reproduceable even though multiple
-    // runs produce the same correctness, but different order. It's going to be harder to test
-    // otherwise
     let mut full_content = String::from("");
     for (k, v) in tally {
         let out = reduce_fn(k, v.values);
@@ -126,6 +123,7 @@ pub fn worker(
     };
 
     println!("[worker] done with {task_file_path}");
+    println!("{:#?}", list_kv_pairs);
     Ok(list_kv_pairs)
 }
 
