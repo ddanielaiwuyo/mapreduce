@@ -84,11 +84,11 @@ pub fn coordinator(
     // for unfinished_task in tasks.iter_mut().filter(|task| task.state.eq(&State::Idle)) {
     //     println!("  {unfinished_task:#?}");
     // }
-    for task in tasks
+    for failed_task in tasks
         .iter_mut()
         .filter(|task| task.state.eq(&State::Failed))
     {
-        println!("  {task:#?}");
+        println!("  {failed_task:#?}");
     }
 
     for handle in worker_handles {
